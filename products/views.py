@@ -5,12 +5,7 @@ from django.utils.translation import gettext as _
 
 from .models import Product, Comment
 from .forms import CommentForm
-
-
-def test_translation(request):
-    result = _('Hello')
-    messages.success(request, 'This is a success message')
-    return render(request, 'products/testhello.html')
+from cart.forms import AddTOCartProductForm
 
 
 class ProductListView(generic.ListView):
@@ -28,6 +23,7 @@ class ProductDetailView(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['comment_form'] = CommentForm()
+        context['add_to_cart_form'] = AddTOCartProductForm()
         return context
 
 
@@ -42,5 +38,6 @@ class CommentCreateView(generic.CreateView):
         product_id = int(self.kwargs['product_id'])
         product = get_object_or_404(Product, id=product_id)
         obj.product = product
+        messages.success(self.request, _('comment successfully created'))
 
         return super().form_valid(form)
